@@ -17,8 +17,8 @@ public class Program_DateTime {
         LocalDate d04 = LocalDate.parse("2022-07-20");
         LocalDateTime d05 = LocalDateTime.parse("2022-07-20T01:30:26");
         
-        Instant d06 = Instant.parse("2022-07-20T02:30:26Z");;
-        Instant d07 = Instant.parse("2022-07-20T02:30:26-03:00");;
+        Instant d06 = Instant.parse("2022-07-20T02:30:26Z");
+        Instant d07 = Instant.parse("2022-07-20T02:30:26-03:00");
         
         LocalDate d08 = LocalDate.parse("20/07/2022", fm1);
         LocalDateTime d09 = LocalDateTime.parse("20/07/2022 13:30", DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm"));
