@@ -99,7 +99,8 @@ public class ChessMatch {
     }
     
     private Piece makeMove(Position source, Position target){
-        Piece p = board.removePiece(source);
+        ChessPiece p = (ChessPiece)board.removePiece(source);
+        p.increaseMoveCount();
         Piece captured = board.removePiece(target);
         board.placePiece(p, target);
         
@@ -111,7 +112,8 @@ public class ChessMatch {
     }
     
     private void undoMove(Position source, Position target, Piece captured){
-        Piece p = board.removePiece(target);
+        ChessPiece p = (ChessPiece)board.removePiece(target);
+        p.decreaseMoveCount();
         board.placePiece(p, source);
         
         if(captured != null){
@@ -145,12 +147,23 @@ public class ChessMatch {
     }
     
     private void initialSetup() {
-        placeNewPiece('a', 8, new Rook(board, Color.BLACK));
-        placeNewPiece('h', 8, new Rook(board, Color.BLACK));
+        //kings
+        placeNewPiece('e', 1, new King(board, Color.WHITE));
         placeNewPiece('e', 8, new King(board, Color.BLACK));
+        
+        //rooks
         placeNewPiece('a', 1, new Rook(board, Color.WHITE));
         placeNewPiece('h', 1, new Rook(board, Color.WHITE));
-        placeNewPiece('e', 1, new King(board, Color.WHITE));
+        placeNewPiece('a', 8, new Rook(board, Color.BLACK));
+        placeNewPiece('h', 8, new Rook(board, Color.BLACK));
+        
+        //pawns
+        for(int i = 0; i <8; i++){
+            placeNewPiece((char)('a'+ i), 7, new Pawn(board, Color.BLACK)); 
+            placeNewPiece((char)('a'+ i), 2, new Pawn(board, Color.WHITE)); 
+        }
+        
+        
     }
     
     private boolean testCheck(Color color){
