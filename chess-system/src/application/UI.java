@@ -4,7 +4,6 @@ import java.util.Arrays;
 import java.util.InputMismatchException;
 import java.util.List;
 import java.util.Scanner;
-import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
 import chess.ChessMatch;
@@ -35,27 +34,32 @@ public class UI {
 	public static final String ANSI_CYAN_BACKGROUND = "\u001B[46m";
 	public static final String ANSI_WHITE_BACKGROUND = "\u001B[47m";
     
-    public static void clearScreen(){
-        System.out.print("\033[H\033[2J");
-        System.out.flush();
-    }
+    public static void clearScreen() {
+		System.out.print("\033[H\033[2J");
+		System.out.flush();
+	}
 
-    public static void printMatch(ChessMatch match){
+    public static void printMatch(ChessMatch match, List<ChessPiece> captured){
         printBoard(match.getPieces());
+        System.out.println();
+        printCaptured(captured);
         System.out.println();
         System.out.println("Turn: " + match.getTurn());
         System.out.println("Waiting player: " + match.getCurrentPlayer());
+        if(match.getCheck()){
+            System.out.println("CHECK!");
+        }
     }
         
     public static void printBoard(ChessPiece[][] pieces){
-        for(int i=0; i<pieces.length; i++){
-            System.out.print((8-i) + " ");
-            for(int j=0; j<pieces.length; j++){
-                printPiece(pieces[i][j], false);
-            }
-            System.out.println();
-        }
-        System.out.println("  a b c d e f g h");
+        for (int i = 0; i < pieces.length; i++) {
+			System.out.print((8 - i) + " ");
+			for (int j = 0; j < pieces.length; j++) {
+				printPiece(pieces[i][j], false);
+			}
+			System.out.println();
+		}
+		System.out.println("  a b c d e f g h");
     }
     
     public static void printBoard(ChessPiece[][] pieces, boolean[][] possibleMoves){
@@ -117,6 +121,7 @@ public class UI {
         System.out.print("Black: ");
         System.out.print(ANSI_YELLOW);
         System.out.println(Arrays.toString(black.toArray()));
+        System.out.print(ANSI_RESET);
         
     }
     
