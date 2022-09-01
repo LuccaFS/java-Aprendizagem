@@ -108,6 +108,25 @@ public class ChessMatch {
             piecesOnBoard.remove(captured);
             piecesCaptured.add(captured);
         }
+        
+        //special move small castling
+        if(p instanceof King && target.getCol() == source.getCol()+2){
+            Position sourceR = new Position(source.getRow(), source.getCol()+3);
+            Position targetR = new Position(source.getRow(), source.getCol()+1);
+            ChessPiece rook = (ChessPiece)board.removePiece(sourceR);
+            board.placePiece(rook, targetR);
+            rook.increaseMoveCount();
+        }
+        
+        //special move big castling
+        if(p instanceof King && target.getCol() == source.getCol()-2){
+            Position sourceR = new Position(source.getRow(), source.getCol()-4);
+            Position targetR = new Position(source.getRow(), source.getCol()-1);
+            ChessPiece rook = (ChessPiece)board.removePiece(sourceR);
+            board.placePiece(rook, targetR);
+            rook.increaseMoveCount();
+        }
+        
         return captured;
     }
     
@@ -148,9 +167,9 @@ public class ChessMatch {
     
     private void initialSetup() {
         //kings
-        placeNewPiece('e', 1, new King(board, Color.WHITE));
+        placeNewPiece('e', 1, new King(board, Color.WHITE, this));
         
-        placeNewPiece('e', 8, new King(board, Color.BLACK));
+        placeNewPiece('e', 8, new King(board, Color.BLACK, this));
         
         //queens
         placeNewPiece('d', 1, new Queen(board, Color.WHITE));
