@@ -16,6 +16,7 @@ public class ChessMatch {
     private Board board;
     private boolean check;
     private boolean checkmate;
+    private ChessPiece enPassantVulnerable;
     
     private List<Piece> piecesOnBoard = new ArrayList<>();
     private List<Piece> piecesCaptured = new ArrayList<>();
@@ -53,6 +54,10 @@ public class ChessMatch {
         return checkmate;
     }
     
+    public ChessPiece getEnPassantVulnerable(){
+        return enPassantVulnerable;
+    }
+    
     private ChessPiece king(Color color){
         List<Piece> list = piecesOnBoard.stream().filter(x -> ((ChessPiece)x).getColor() == color).collect(Collectors.toList());
         for(Piece p : list){
@@ -87,12 +92,21 @@ public class ChessMatch {
         validateTargetPosition(source, target);
         Piece capturedPiece = makeMove(source, target);
         
+        ChessPiece moved = (ChessPiece)board.piece(target);
+        
         check = testCheck(opponent(currentPlayer));
         
         if(testCheckMate(opponent(currentPlayer))){
             checkmate = true;
         }else{
             nextTurn();
+        }
+        
+        //Special move en passant
+        if(moved instanceof Pawn && (target.getRow() == source.getRow() -2 || target.getRow() == source.getRow() +2)){
+            enPassantVulnerable = moved;
+        }else{
+            enPassantVulnerable = null;
         }
         
         return (ChessPiece)capturedPiece;
@@ -125,6 +139,21 @@ public class ChessMatch {
             ChessPiece rook = (ChessPiece)board.removePiece(sourceR);
             board.placePiece(rook, targetR);
             rook.increaseMoveCount();
+        }
+        
+        //special move en passant
+        if(p instanceof Pawn){
+            if(source.getCol() != target.getCol() && captured == null){
+                Position pawnPosition;
+                if(p.getColor() == Color.WHITE){
+                    pawnPosition = new Position(target.getRow()+1, target.getCol());
+                }else{
+                    pawnPosition = new Position(target.getRow()-1, target.getCol());
+                }
+                captured = board.removePiece(pawnPosition);
+                piecesCaptured.add(captured);
+                piecesOnBoard.remove(captured);
+            }
         }
         
         return captured;
@@ -199,9 +228,9 @@ public class ChessMatch {
         
         //pawns
         for(int i = 0; i <8; i++){
-            placeNewPiece((char)('a'+ i), 7, new Pawn(board, Color.BLACK));
+            placeNewPiece((char)('a'+ i), 7, new Pawn(board, Color.BLACK, this));
              
-            placeNewPiece((char)('a'+ i), 2, new Pawn(board, Color.WHITE)); 
+            placeNewPiece((char)('a'+ i), 2, new Pawn(board, Color.WHITE, this)); 
         }
         
         
